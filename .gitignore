@@ -4,6 +4,11 @@
 # Module directory
 .terraform/
 
+# Variables
+*.tfvars*
+
+# Lockfile
+
 # keys
 *id_rsa*
 

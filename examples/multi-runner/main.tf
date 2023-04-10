@@ -1,9 +1,6 @@
 locals {
   environment = var.environment != null ? var.environment : "multi-runner"
-  aws_region  = "eu-west-1"
-
-  # Load runner configurations from Yaml files
-  multi_runner_config = { for c in fileset("${path.module}/templates/runner-configs", "*.yaml") : trimsuffix(c, ".yaml") => yamldecode(file("${path.module}/templates/runner-configs/${c}")) }
+  aws_region  = "us-east-1"
 }
 
 resource "random_id" "random" {
@@ -11,39 +8,76 @@ resource "random_id" "random" {
 }
 
 module "multi-runner" {
-  source              = "../../modules/multi-runner"
-  multi_runner_config = local.multi_runner_config
-  #  Alternative to loading runner configuration from Yaml files is using static configuration:
-  #  multi_runner_config = {
-  #    "linux-x64" = {
-  #      matcherConfig : {
-  #        labelMatchers = [["self-hosted", "linux", "x64", "amazon"]]
-  #        exactMatch    = false
-  #      }
-  #      fifo                = true
-  #      delay_webhook_event = 0
-  #      runner_config = {
-  #        runner_os                       = "linux"
-  #        runner_architecture             = "x64"
-  #        runner_name_prefix              = "amazon-x64_"
-  #        create_service_linked_role_spot = true
-  #        enable_ssm_on_runners           = true
-  #        instance_types                  = ["m5ad.large", "m5a.large"]
-  #        runner_extra_labels             = "amazon"
-  #        runners_maximum_count           = 1
-  #        enable_ephemeral_runners        = true
-  #        scale_down_schedule_expression  = "cron(* * * * ? *)"
-  #      }
-  #    }
-  #  }
+  source = "../../modules/multi-runner"
+  multi_runner_config = {
+    "linux-ubuntu" = {
+      matcherConfig : {
+        labelMatchers = [["self-hosted", "linux", "x64", "ubuntu-latest"]]
+        exactMatch    = true
+      }
+      fifo                = true
+      delay_webhook_event = 0
+      redrive_build_queue = {
+        enabled         = false
+        maxReceiveCount = null
+      }
+      runner_config = {
+        runner_os                      = "linux"
+        runner_architecture            = "x64"
+        runner_extra_labels            = "ubuntu-latest,ubuntu-2204"
+        runner_run_as                  = "ubuntu"
+        runner_name_prefix             = "ubuntu-2204-x64_"
+        enable_ssm_on_runners          = true
+        instance_types                  = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
+        runners_maximum_count          = 16
+        scale_down_schedule_expression = "cron(* * * * ? *)"
+        userdata_template              = "./templates/user-data.sh"
+        ami_owners                     = var.ami_owners # Airbase's Amazon account ID
+        pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
+        ami_filter                     = var.ami_filter
+        block_device_mappings = [{
+          # Set the block device name for Ubuntu root device
+          device_name           = "/dev/sda1"
+          delete_on_termination = true
+          volume_type           = "gp3"
+          volume_size           = var.volume_size
+          encrypted             = true
+          iops                  = null
+          throughput            = null
+          kms_key_id            = null
+          snapshot_id           = null
+        }]
+        runner_log_files = [
+          {
+            log_group_name   = "syslog"
+            prefix_log_group = true
+            file_path        = "/var/log/syslog"
+            log_stream_name  = "{instance_id}"
+          },
+          {
+            log_group_name   = "user_data"
+            prefix_log_group = true
+            file_path        = "/var/log/user-data.log"
+            log_stream_name  = "{instance_id}/user_data"
+          },
+          {
+            log_group_name   = "runner"
+            prefix_log_group = true
+            file_path        = "/opt/actions-runner/_diag/Runner_**.log",
+            log_stream_name  = "{instance_id}/runner"
+          }
+        ]
+      }
+    }
+  }
   aws_region                        = local.aws_region
-  vpc_id                            = module.vpc.vpc_id
-  subnet_ids                        = module.vpc.private_subnets
+  vpc_id                            = var.vpc_id
+  subnet_ids                        = var.subnet_ids
   runners_scale_up_lambda_timeout   = 60
-  runners_scale_down_lambda_timeout = 60
+  runners_scale_down_lambda_timeout = 120
   prefix                            = local.environment
   tags = {
-    Project = "ProjectX"
+    Project = "airbase"
   }
   github_app = {
     key_base64     = var.github_app.key_base64
@@ -53,11 +87,10 @@ module "multi-runner" {
 
   # Assuming local build lambda's to use pre build ones, uncomment the lines below and download the
   # lambda zip files lambda_download
-  # webhook_lambda_zip                = "../lambdas-download/webhook.zip"
-  # runner_binaries_syncer_lambda_zip = "../lambdas-download/runner-binaries-syncer.zip"
-  # runners_lambda_zip                = "../lambdas-download/runners.zip"
-
-  # enable_workflow_job_events_queue = true
+  webhook_lambda_zip                = "../lambdas-download/webhook.zip"
+  runner_binaries_syncer_lambda_zip = "../lambdas-download/runner-binaries-syncer.zip"
+  runners_lambda_zip                = "../lambdas-download/runners.zip"
+  enable_workflow_job_events_queue = true
   # override delay of events in seconds
 
   # Enable debug logging for the lambda functions
