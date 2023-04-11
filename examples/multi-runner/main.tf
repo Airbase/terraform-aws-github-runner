@@ -28,8 +28,9 @@ module "multi-runner" {
         runner_run_as                  = "ubuntu"
         runner_name_prefix             = "ubuntu-2204-x64_"
         enable_ssm_on_runners          = true
-        instance_types                  = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
-        runners_maximum_count          = 16
+        enable_ephemeral_runners       = true
+        instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
+        runners_maximum_count          = var.runners_maximum_count
         scale_down_schedule_expression = "cron(* * * * ? *)"
         userdata_template              = "./templates/user-data.sh"
         ami_owners                     = var.ami_owners # Airbase's Amazon account ID
@@ -90,7 +91,7 @@ module "multi-runner" {
   webhook_lambda_zip                = "../lambdas-download/webhook.zip"
   runner_binaries_syncer_lambda_zip = "../lambdas-download/runner-binaries-syncer.zip"
   runners_lambda_zip                = "../lambdas-download/runners.zip"
-  enable_workflow_job_events_queue = true
+  enable_workflow_job_events_queue  = true
   # override delay of events in seconds
 
   # Enable debug logging for the lambda functions

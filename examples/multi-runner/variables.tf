@@ -48,3 +48,8 @@ variable "subnet_ids" {
   type = list(string)
   default = [ "null" ]
 }
+
+variable "runners_maximum_count" {
+  type = number
+  default = 16
+}
