@@ -12,7 +12,7 @@ module "multi-runner" {
   multi_runner_config = {
     "linux-ubuntu" = {
       matcherConfig : {
-        labelMatchers = [["self-hosted", "linux", "x64", "ubuntu-latest"]]
+        labelMatchers = [["self-hosted", "linux", "x64"]]
         exactMatch    = true
       }
       fifo                = true
@@ -24,17 +24,26 @@ module "multi-runner" {
       runner_config = {
         runner_os                      = "linux"
         runner_architecture            = "x64"
-        runner_extra_labels            = "ubuntu-latest,ubuntu-2204"
+        runner_extra_labels            = ""
         runner_run_as                  = "ubuntu"
         runner_name_prefix             = "ubuntu-2204-x64_"
         enable_ssm_on_runners          = true
         enable_ephemeral_runners       = true
         instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
+        idle_config = [{
+          cron      = "* * 10-22 * * 1-5"
+          timeZone  = "Asia/Kolkata"
+          idleCount = 100
+        }]
         runners_maximum_count          = var.runners_maximum_count
         scale_down_schedule_expression = "cron(* * * * ? *)"
         userdata_template              = "./templates/user-data.sh"
         ami_owners                     = var.ami_owners # Airbase's Amazon account ID
         pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
+        pool_config = [{
+          size                = 100                    # size of the pool
+          schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
+        }]
         ami_filter                     = var.ami_filter
         block_device_mappings = [{
           # Set the block device name for Ubuntu root device
