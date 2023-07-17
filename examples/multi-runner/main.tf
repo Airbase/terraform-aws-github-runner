@@ -31,7 +31,7 @@ module "multi-runner" {
         enable_ephemeral_runners       = true
         instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
         idle_config = [{
-          cron      = "* * 10-22 * * 1-5"
+          cron      = "* * 10-22 * * *"
           timeZone  = "Asia/Kolkata"
           idleCount = 100
         }]
