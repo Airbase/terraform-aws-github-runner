@@ -80,8 +80,16 @@ Be aware some shells will print some end of line character `%`.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ami_filter"></a> [ami\_filter](#input\_ami\_filter) | n/a | `map(list(string))` | <pre>{<br>  "name": [<br>    "null"<br>  ]<br>}</pre> | no |
+| <a name="input_ami_owners"></a> [ami\_owners](#input\_ami\_owners) | n/a | `list(string)` | <pre>[<br>  "null"<br>]</pre> | no |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | n/a | `string` | `"us-east-1"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | n/a | `string` | `null` | no |
 | <a name="input_github_app"></a> [github\_app](#input\_github\_app) | GitHub for API usages. | <pre>object({<br>    id         = string<br>    key_base64 = string<br>  })</pre> | n/a | yes |
+| <a name="input_pool_runner_owner"></a> [pool\_runner\_owner](#input\_pool\_runner\_owner) | n/a | `string` | `"null"` | no |
+| <a name="input_runners_maximum_count"></a> [runners\_maximum\_count](#input\_runners\_maximum\_count) | n/a | `number` | `16` | no |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | n/a | `list(string)` | <pre>[<br>  "null"<br>]</pre> | no |
+| <a name="input_volume_size"></a> [volume\_size](#input\_volume\_size) | n/a | `number` | `10` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | n/a | `string` | `"null"` | no |
 
 ## Outputs
 
