@@ -6,6 +6,12 @@ locals {
 resource "random_id" "random" {
   byte_length = 20
 }
+module "base" {
+  source = "../base"
+
+  prefix     = local.environment
+  aws_region = local.aws_region
+}
 
 module "multi-runner" {
   source = "../../modules/multi-runner"
