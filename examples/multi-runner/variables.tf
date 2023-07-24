@@ -29,6 +29,11 @@ variable "ami_filter" {
   }
 }
 
+variable "enable_userdata" {
+  type = bool
+  default = true
+}
+
 variable "pool_runner_owner" {
   type = string
   default = "null"

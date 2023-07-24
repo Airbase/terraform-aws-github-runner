@@ -103,6 +103,8 @@ source "amazon-ebs" "githubrunner" {
   subnet_id                                 = var.subnet_id
   associate_public_ip_address               = var.associate_public_ip_address
   temporary_security_group_source_public_ip = var.temporary_security_group_source_public_ip
+  # TODO: Remove this once docker fixes its root cert issue with curl
+  insecure_skip_tls_verify                  = true
 
   source_ami_filter {
     filters = {
@@ -148,7 +150,7 @@ build {
       "sudo cloud-init status --wait",
       "sudo apt-get -y update",
       "sudo apt-get -y install ca-certificates curl gnupg lsb-release",
-      "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg",
+      "sudo curl -fsSL -k  https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg",
       "echo deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get -y update",
       "sudo apt-get -y install docker-ce docker-ce-cli containerd.io jq git unzip",
@@ -161,6 +163,11 @@ build {
       "sudo curl -f https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip",
       "unzip awscliv2.zip",
       "sudo ./aws/install",
+      # airbase custom tooling
+      "sudo apt install software-properties-common python3 python3-pip -y",
+      "echo 'alias python=python3' >> /home/ubuntu/.bashrc",
+      "echo 'alias pip=pip3' >> /home/ubuntu/.bashrc",
+      "python3 -m pip install --upgrade pip",
     ], var.custom_shell_commands)
   }
 

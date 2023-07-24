@@ -51,6 +51,7 @@ module "multi-runner" {
           schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
         }]
         ami_filter                     = var.ami_filter
+        enable_userdata                = var.enable_userdata
         block_device_mappings = [{
           # Set the block device name for Ubuntu root device
           device_name           = "/dev/sda1"
