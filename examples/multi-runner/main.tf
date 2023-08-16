@@ -37,7 +37,7 @@ module "multi-runner" {
         enable_ephemeral_runners       = true
         instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
         idle_config = [{
-          cron      = "* * 10-22 * * *"
+          cron      = "* * * * * *"
           timeZone  = "Asia/Kolkata"
           idleCount = 100
         }]
@@ -48,6 +48,146 @@ module "multi-runner" {
         pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
         pool_config = [{
           size                = 100                    # size of the pool
+          schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
+        }]
+        ami_filter                     = var.ami_filter
+        enable_userdata                = var.enable_userdata
+        block_device_mappings = [{
+          # Set the block device name for Ubuntu root device
+          device_name           = "/dev/sda1"
+          delete_on_termination = true
+          volume_type           = "gp3"
+          volume_size           = var.volume_size
+          encrypted             = true
+          iops                  = null
+          throughput            = null
+          kms_key_id            = null
+          snapshot_id           = null
+        }]
+        runner_log_files = [
+          {
+            log_group_name   = "syslog"
+            prefix_log_group = true
+            file_path        = "/var/log/syslog"
+            log_stream_name  = "{instance_id}"
+          },
+          {
+            log_group_name   = "user_data"
+            prefix_log_group = true
+            file_path        = "/var/log/user-data.log"
+            log_stream_name  = "{instance_id}/user_data"
+          },
+          {
+            log_group_name   = "runner"
+            prefix_log_group = true
+            file_path        = "/opt/actions-runner/_diag/Runner_**.log",
+            log_stream_name  = "{instance_id}/runner"
+          }
+        ]
+      }
+    },
+    "linux-ubuntu-8-core" = {
+      matcherConfig : {
+        labelMatchers = [["self-hosted-8-core"]]
+        exactMatch    = true
+      }
+      fifo                = true
+      delay_webhook_event = 0
+      redrive_build_queue = {
+        enabled         = false
+        maxReceiveCount = null
+      }
+      runner_config = {
+        runner_os                      = "linux"
+        runner_architecture            = "x64"
+        runner_extra_labels            = "self-hosted-8-core"
+        runner_run_as                  = "ubuntu"
+        runner_name_prefix             = "ubuntu-2204-x64_"
+        enable_ssm_on_runners          = true
+        enable_ephemeral_runners       = true
+        instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]  
+        idle_config = [{
+          cron      = "* * * * * *"
+          timeZone  = "Asia/Kolkata"
+          idleCount = 100
+        }]
+        runners_maximum_count          = var.runners_maximum_count
+        scale_down_schedule_expression = "cron(* * * * ? *)"
+        userdata_template              = "./templates/user-data.sh"
+        ami_owners                     = var.ami_owners # Airbase's Amazon account ID
+        pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
+        pool_config = [{
+          size                = 100                    # size of the pool
+          schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
+        }]
+        ami_filter                     = var.ami_filter
+        enable_userdata                = var.enable_userdata
+        block_device_mappings = [{
+          # Set the block device name for Ubuntu root device
+          device_name           = "/dev/sda1"
+          delete_on_termination = true
+          volume_type           = "gp3"
+          volume_size           = var.volume_size
+          encrypted             = true
+          iops                  = null
+          throughput            = null
+          kms_key_id            = null
+          snapshot_id           = null
+        }]
+        runner_log_files = [
+          {
+            log_group_name   = "syslog"
+            prefix_log_group = true
+            file_path        = "/var/log/syslog"
+            log_stream_name  = "{instance_id}"
+          },
+          {
+            log_group_name   = "user_data"
+            prefix_log_group = true
+            file_path        = "/var/log/user-data.log"
+            log_stream_name  = "{instance_id}/user_data"
+          },
+          {
+            log_group_name   = "runner"
+            prefix_log_group = true
+            file_path        = "/opt/actions-runner/_diag/Runner_**.log",
+            log_stream_name  = "{instance_id}/runner"
+          }
+        ]
+      }
+    },
+    "linux-ubuntu-16-core" = {
+      matcherConfig : {
+        labelMatchers = [["self-hosted-16-core"]]
+        exactMatch    = true
+      }
+      fifo                = true
+      delay_webhook_event = 0
+      redrive_build_queue = {
+        enabled         = false
+        maxReceiveCount = null
+      }
+      runner_config = {
+        runner_os                      = "linux"
+        runner_architecture            = "x64"
+        runner_extra_labels            = "self-hosted-16-core"
+        runner_run_as                  = "ubuntu"
+        runner_name_prefix             = "ubuntu-2204-x64_"
+        enable_ssm_on_runners          = true
+        enable_ephemeral_runners       = true
+        instance_types                 = ["m6g.4xlarge" ,"c5.4xlarge", "m5.4xlarge", "m5n.4xlarge", "m5a.4xlarge", "m4.4xlarge"]  
+        idle_config = [{
+          cron      = "* * * * * *"
+          timeZone  = "Asia/Kolkata"
+          idleCount = 40
+        }]
+        runners_maximum_count          = var.runners_maximum_count
+        scale_down_schedule_expression = "cron(* * * * ? *)"
+        userdata_template              = "./templates/user-data.sh"
+        ami_owners                     = var.ami_owners # Airbase's Amazon account ID
+        pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
+        pool_config = [{
+          size                = 40                    # size of the pool
           schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
         }]
         ami_filter                     = var.ami_filter
