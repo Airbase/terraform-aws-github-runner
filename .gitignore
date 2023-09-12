@@ -1,6 +1,9 @@
 # state
 *.tfstate*
 
+# plan
+*.plan*
+
 # Module directory
 .terraform/
 
