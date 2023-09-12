@@ -58,3 +58,18 @@ variable "runners_maximum_count" {
   type = number
   default = 16
 }
+
+variable "minimum_running_time_in_minutes" {
+  type = number
+  default = 60
+}
+
+variable "instance_target_capacity_type" {
+  description = "Default lifecycle used for runner instances, can be either `spot` or `on-demand`."
+  type        = string
+  default     = "spot"
+  validation {
+    condition     = contains(["spot", "on-demand"], var.instance_target_capacity_type)
+    error_message = "The instance target capacity should be either spot or on-demand."
+  }
+}
