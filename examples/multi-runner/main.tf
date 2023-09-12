@@ -37,18 +37,13 @@ module "multi-runner" {
         enable_ephemeral_runners       = true
         instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]
         instance_target_capacity_type  = var.instance_target_capacity_type
-        idle_config = [{
-          cron      = "* * * * * *"
-          timeZone  = "Asia/Kolkata"
-          idleCount = 5
-        }]
         runners_maximum_count          = var.runners_maximum_count
         scale_down_schedule_expression = "cron(* * * * ? *)"
         userdata_template              = "./templates/user-data.sh"
         ami_owners                     = var.ami_owners # Airbase's Amazon account ID
         pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
         pool_config = [{
-          size                = 6                    # size of the pool
+          size                = 1                    # size of the pool
           schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
         }]
         ami_filter                     = var.ami_filter
@@ -108,18 +103,13 @@ module "multi-runner" {
         enable_ephemeral_runners       = true
         instance_types                 = ["c3.2xlarge","c4.2xlarge","c5.2xlarge","c5d.2xlarge", "c5.4xlarge", "c5a.4xlarge", "c6g.4xlarge", "c6gd.4xlarge", "c7g.4xlarge"]
         instance_target_capacity_type  = var.instance_target_capacity_type
-        idle_config = [{
-          cron      = "* * * * * *"
-          timeZone  = "Asia/Kolkata"
-          idleCount = 5
-        }]
         runners_maximum_count          = var.runners_maximum_count
         scale_down_schedule_expression = "cron(* * * * ? *)"
         userdata_template              = "./templates/user-data.sh"
         ami_owners                     = var.ami_owners # Airbase's Amazon account ID
         pool_runner_owner              = var.pool_runner_owner # Org to which the runners are added
         pool_config = [{
-          size                = 6                    # size of the pool
+          size                = 1                    # size of the pool
           schedule_expression = "cron(* * * * ? *)"   # cron expression to trigger the adjustment of the pool
         }]
         ami_filter                     = var.ami_filter
