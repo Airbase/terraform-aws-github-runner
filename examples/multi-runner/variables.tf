@@ -17,6 +17,11 @@ variable "github_app" {
   })
 }
 
+variable "key_name" {
+  type    = string
+  default = null
+}
+
 variable "ami_owners" {
   type = list(string)
   default = [ "null" ]
