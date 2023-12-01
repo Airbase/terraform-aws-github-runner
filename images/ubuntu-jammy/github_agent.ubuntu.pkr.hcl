@@ -168,6 +168,7 @@ build {
       "echo 'alias python=python3' >> /home/ubuntu/.bashrc",
       "echo 'alias pip=pip3' >> /home/ubuntu/.bashrc",
       "python3 -m pip install --upgrade pip",
+      "npx playwright install-deps",
     ], var.custom_shell_commands)
   }
 
