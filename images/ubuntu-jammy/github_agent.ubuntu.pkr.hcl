@@ -168,7 +168,12 @@ build {
       "echo 'alias python=python3' >> /home/ubuntu/.bashrc",
       "echo 'alias pip=pip3' >> /home/ubuntu/.bashrc",
       "python3 -m pip install --upgrade pip",
-      "npx playwright install-deps",
+      "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash" # Node Version Manager
+      "nvm install 20" # Node 20
+      "npm install -g pnpm" # Package manager
+      "pnpm install -g wrangler" # Cloudflare cli
+      "pnpm install -g @sentry/cli@2.17.4" # Sentry cli
+      "npx playwright install-deps", # System dependencies for playwright e2e testing
     ], var.custom_shell_commands)
   }
 
