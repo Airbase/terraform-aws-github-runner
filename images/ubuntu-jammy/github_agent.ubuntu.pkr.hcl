@@ -163,11 +163,24 @@ build {
       "sudo curl -f https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip",
       "unzip awscliv2.zip",
       "sudo ./aws/install",
-      # airbase custom tooling
+      # airbase custom tooling - backend
       "sudo apt install software-properties-common python3 python3-pip -y",
       "echo 'alias python=python3' >> /home/ubuntu/.bashrc",
       "echo 'alias pip=pip3' >> /home/ubuntu/.bashrc",
       "python3 -m pip install --upgrade pip",
+      # airbase custom tooling - frontend
+      "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash", # Node Version Manager
+      "export NVM_DIR=$HOME/.nvm",
+      "[ -s $NVM_DIR/nvm.sh ]",
+      ". $NVM_DIR/nvm.sh",
+      "nvm install 20", # Node 20
+      "npm install -g pnpm", # Package manager
+      "pnpm setup",
+      "export PNPM_HOME=/home/ubuntu/.local/share/pnpm",
+      "export PATH=$PNPM_HOME:$PATH",
+      "pnpm install -g wrangler", # Cloudflare cli
+      "pnpm install -g @sentry/cli@2.17.4", # Sentry cli
+      "npx playwright install-deps", # System dependencies for playwright e2e testing
     ], var.custom_shell_commands)
   }
 
