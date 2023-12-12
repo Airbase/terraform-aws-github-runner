@@ -1,5 +1,5 @@
 variable "aws_region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
@@ -23,49 +23,49 @@ variable "key_name" {
 }
 
 variable "ami_owners" {
-  type = list(string)
-  default = [ "null" ]
+  type    = list(string)
+  default = ["null"]
 }
 
 variable "ami_filter" {
   type = map(list(string))
   default = {
-    name = [ "null" ]
+    name = ["null"]
   }
 }
 
 variable "enable_userdata" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "pool_runner_owner" {
-  type = string
+  type    = string
   default = "null"
 }
 
 variable "volume_size" {
-  type = number
+  type    = number
   default = 10
 }
 
 variable "vpc_id" {
-  type = string
-  default = "null"  
+  type    = string
+  default = "null"
 }
 
 variable "subnet_ids" {
-  type = list(string)
-  default = [ "null" ]
+  type    = list(string)
+  default = ["null"]
 }
 
 variable "runners_maximum_count" {
-  type = number
+  type    = number
   default = 16
 }
 
 variable "minimum_running_time_in_minutes" {
-  type = number
+  type    = number
   default = 60
 }
 
